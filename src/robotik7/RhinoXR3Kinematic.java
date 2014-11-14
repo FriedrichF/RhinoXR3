@@ -206,8 +206,9 @@ public class RhinoXR3Kinematic {
 		this.b2	= d1	-a4*sin(q234)	-d5*cos(q234)	-w3;
 		System.out.println(b2+" b2");
 		System.out.println((b1*b1+b2*b2-a2*a2-a3*a3)/(2*a2*a3)+ "  acos");
-		System.out.println(acos(((b1*b1)+(b2*b2)-(a2*a2)-(a3*a3))/(2*a2*a3))+ "  acos");
-		Double q3	= acos(((b1*b1)+(b2*b2)-(a2*a2)-(a3*a3))/(2*a2*a3));
+		System.out.println(acos(gradToBogen(((b1*b1)+(b2*b2)-(a2*a2)-(a3*a3))/(2*a2*a3))) + "  acos");
+		double bogen = gradToBogen(((b1*b1)+(b2*b2)-(a2*a2)-(a3*a3))/(2*a2*a3));
+		double q3	= acos(bogen);
 		
 		return q3;
 	}
@@ -251,5 +252,9 @@ public class RhinoXR3Kinematic {
 		
 		return s+"\r";
 		
+	}
+	
+	private double gradToBogen(double grad){
+		return grad * PI/180;
 	}
 }
