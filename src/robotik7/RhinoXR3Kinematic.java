@@ -330,7 +330,7 @@ public class RhinoXR3Kinematic {
 		this.q234 	= atan2(-b0,	-w6);
 		this.b1		= cos(q1)*w1	+sin(q1)*w2		-a4*cos(q234)	+ d5*sin(q234);
 		this.b2		= d1	-a4*sin(q234)	-d5*cos(q234)	-w3;
-		double bogen = gradToBogen((pow(b1,2)+pow(b2,2)-pow(a2,2)-pow(a3,2))/(2*a2*a3));
+		double bogen = Math.toRadians((pow(b1,2)+pow(b2,2)-pow(a2,2)-pow(a3,2))/(2*a2*a3));
 
 		double q3	= acos(bogen);
 		
@@ -392,7 +392,4 @@ public class RhinoXR3Kinematic {
 		
 	}
 	
-	private double gradToBogen(double grad){
-		return grad * PI/180;
-	}
 }
