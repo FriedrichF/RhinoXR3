@@ -1,6 +1,7 @@
 package robotik7;
 
 import java.util.Vector;
+
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.lang.Math.atan2;
@@ -42,7 +43,7 @@ public class RhinoXR3Kinematic {
 		//skript 4 seite 51, Geschwindigkeit basis
 		Double qt1 = (w1*wt2-w2*w1)/(w1*w1+w2*w2);
 		
-		return qt1;
+		return runde(qt1);
 		
 	}
 	
@@ -88,7 +89,7 @@ public class RhinoXR3Kinematic {
 		//w1 = C1(a2C2+a3C23+a4C234-d5S234)
 		Double w1 	= cos(q1)*(a2*cos(q2)+a3*cos(q23)+a4*cos(q234)-d5*sin(q234));
 		
-		return w1;
+		return runde(w1);
 		
 	}
 	
@@ -100,7 +101,7 @@ public class RhinoXR3Kinematic {
 		//w2 = S1(a2C2+a3C23+a4C234-d5S234)
 		Double w2 	= sin(q1)*(a2*cos(q2)+a3*cos(q23)+a4*cos(q234)-d5*sin(q234));
 		
-		return w2;
+		return runde(w2);
 		
 	}
 	
@@ -112,7 +113,7 @@ public class RhinoXR3Kinematic {
 		//w3 = d1-a2S-a3S2-a4S234-d5C234
 		Double w3 	= d1	-a2*sin(q2)	-a3*sin(q23) 	-a4*sin(q234)	-d5*cos(q234);
 		
-		return w3;
+		return runde(w3);
 		
 	}
 	
@@ -124,7 +125,7 @@ public class RhinoXR3Kinematic {
 		
 		Double w4 	= -pow(E, (q5/PI))*cos(q1)*sin(q234);
 		
-		return w4;
+		return runde(w4);
 		
 	}
 	
@@ -136,7 +137,7 @@ public class RhinoXR3Kinematic {
 		
 		Double w5 	= -pow(E, (q5/PI))*sin(q1)*sin(q234);
 		
-		return w5;
+		return runde(w5);
 		
 	}
 	
@@ -148,7 +149,7 @@ public class RhinoXR3Kinematic {
 		
 		Double w6 	= -pow(E, (q5/PI))*cos(q234);
 		
-		return w6;
+		return runde(w6);
 		
 	}
 	
@@ -185,7 +186,7 @@ public class RhinoXR3Kinematic {
 	}
 	
 	private Double bestimme_q1(Double w1, Double w2){
-		return atan2(w2, w1);
+		return runde(atan2(w2, w1));
 	}
 	
 	private Double bestimme_q3(Vector<Double> tool_config_vektor, Double q1){
@@ -200,17 +201,12 @@ public class RhinoXR3Kinematic {
 
 		
 		this.q234 = atan2(-(cos(q1)*w4	+sin(q1)*w5),		-w6);
-		System.out.println(q234+" q234");
 		this.b1	= cos(q1)*w1	+sin(q1)*w2		-a4*cos(q234)	+ d5*sin(q234);
-		System.out.println(b1+" b1");
 		this.b2	= d1	-a4*sin(q234)	-d5*cos(q234)	-w3;
-		System.out.println(b2+" b2");
-		System.out.println((b1*b1+b2*b2-a2*a2-a3*a3)/(2*a2*a3)+ "  acos");
-		System.out.println(acos(gradToBogen(((b1*b1)+(b2*b2)-(a2*a2)-(a3*a3))/(2*a2*a3))) + "  acos");
 		double bogen = gradToBogen(((b1*b1)+(b2*b2)-(a2*a2)-(a3*a3))/(2*a2*a3));
 		double q3	= acos(bogen);
 		
-		return q3;
+		return runde(q3);
 	}
 	
 	private Double bestimme_q2(Double q3){
@@ -220,14 +216,14 @@ public class RhinoXR3Kinematic {
 		
 		Double q2 	= atan2(x, y);
 		
-		return q2;
+		return runde(q2);
 	}
 	
 	private Double bestimme_q4(Double q2, Double q3){
 		
 		Double q4 = q234-q2-q3;
 		
-		return q4;
+		return runde(q4);
 	}
 	
 	private Double bestimme_q5(Vector<Double> tool_config_vektor){
@@ -238,7 +234,7 @@ public class RhinoXR3Kinematic {
 		
 		Double q5 = PI*log(sqrt(w4*w4+w5*w5+w6*w6));
 		
-		return q5;
+		return runde(q5);
 	}
 	
 	
@@ -251,6 +247,19 @@ public class RhinoXR3Kinematic {
 		}
 		
 		return s+"\r";
+		
+	}
+	
+	/**
+	 * 
+	 * Rundet auf 6 Nachkommastellen
+	 * 
+	 * @param wert der gerundet werden soll
+	 * @return den gerundeten Wert zurück
+	 */
+	private Double runde(Double wert){
+		
+		return (double) Math.round(wert * 1000000.0) / 1000000.0;
 		
 	}
 	
