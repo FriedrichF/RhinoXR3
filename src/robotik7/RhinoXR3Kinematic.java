@@ -26,15 +26,29 @@ public class RhinoXR3Kinematic {
 	private Double q234;
 	private Double b1;
 	private Double b2;
+	private Double qt234;
 	
+	
+
 	
 	public Vector<Double> getGeschwindigkeitGelenkvariabel(Vector<Double> w, Vector<Double> wt, Vector<Double> q){
 		
-		//t für Ableitung
+		//t für Ableitung nach zeit
 		Double qt1, qt2, qt3, qt4, qt5;
 		qt1 = bestimme_qt1(w.get(0), wt.get(1), w.get(1), wt.get(0));
+		qt3 = bestimme_qt3(w, wt, q, qt1);
+		qt2 = bestimme_qt2(w, wt, q, qt1, qt3);
+		qt4	= bestimme_qt4(qt2,qt3);
+		qt5 = bestimme_qt5(w,wt);
 		
-		return null;
+		Vector<Double> qt = new Vector<Double>();
+		qt.add(qt1);
+		qt.add(qt2);
+		qt.add(qt3);
+		qt.add(qt4);
+		qt.add(qt5);
+		
+		return qt;
 	}
 	
 	
@@ -45,6 +59,115 @@ public class RhinoXR3Kinematic {
 		
 		return runde(qt1);
 		
+	}
+	
+	
+	private Double bestimme_qt2(Vector<Double> w, Vector<Double> wt, Vector<Double> q, Double qt1, Double qt3 ){
+		
+		Double wt1	= w.get(0);
+		Double wt2	= w.get(1);
+		Double wt3	= w.get(2);
+		Double wt4	= w.get(3);
+		Double wt5	= w.get(4);
+		Double wt6	= w.get(5);
+		
+		Double w1	= w.get(0);
+		Double w2	= w.get(1);
+		Double w4	= w.get(3);
+		Double w5	= w.get(4);
+		Double w6	= w.get(5);
+		
+		Double q1	= q.get(0);
+		Double q2	= q.get(1);
+		Double q3	= q.get(2);
+		Double q23	= q2+q3;
+		
+		Double bt0	= cos(q1)*wt4+sin(q1)+wt5+(-sin(q1)*w4+cos(q1)*w5)*qt1;
+		qt234= (w6*bt0-bt0*wt6)/(w6*w6+bt0*bt0);
+		Double bt1	= cos(q1)*wt1+sin(q1)*wt2+(cos(q1)*w2-sin(q1)*w1)*qt1+(a4*sin(q234)+d5*cos(q234)*qt234);
+		Double bt2	= (d5*sin(234)-a4*cos(234))*qt234-wt3;
+		b1			= a2*cos(q2)+a3*cos(q23);
+		b2			= a2*sin(q2)+a3*sin(q23);
+		
+		Double b3 	= (a2+a3*cos(q3)*b1+a3*sin(q3)*b2);
+		Double b4 	= (a2+a3*cos(q3)*b2+a3*sin(q3)*b1);
+		Double bt3 	= (a2+a3*cos(q3)*bt1+a3*sin(q3)*bt2	+ a3*(cos(q3)*b2-sin(q3)*b1)*qt3);
+		Double bt4 	= (a2+a3*cos(q3)*bt2+a3*sin(q3)*bt1	- a3*(cos(q3)*b1+sin(q3)*b2)*qt3);
+		
+		Double qt2	= (b3*bt4-b4*bt3)/(b3*b3+b4*b4);
+		
+		return runde(qt2);
+	}
+	
+	/**
+	 * Hat zwei Lösungen!!!! qt3 und -qt3
+	 * 
+	 * @param w Tool-Konfigurationsvektor
+	 * @param wt Geschwindigkeit im Tool-Konfigurationsraum als Vektor
+	 * @param q Vektor der Gelenkvariablen
+	 * @param qt1 Geschwindigkeit im Gelenkraum q1
+	 * @return Geschwindigkeit im Gelenkraum q3
+	 */
+	private Double bestimme_qt3(Vector<Double> w, Vector<Double> wt, Vector<Double> q, Double qt1){
+		
+		Double wt1	= w.get(0);
+		Double wt2	= w.get(1);
+		Double wt3	= w.get(2);
+		Double wt4	= w.get(3);
+		Double wt5	= w.get(4);
+		Double wt6	= w.get(5);
+		
+		Double w1	= w.get(0);
+		Double w2	= w.get(1);
+		Double w4	= w.get(3);
+		Double w5	= w.get(4);
+		Double w6	= w.get(5);
+		
+		Double q1	= q.get(0);
+		Double q2	= q.get(1);
+		Double q3	= q.get(2);
+		Double q23	= q2+q3;
+		
+		q234		= q.get(1)+q.get(2)+q.get(3);
+		
+		//skript 4, Seite 52 Geschwindigkeit Ellbogengelenk
+		Double bt0	= cos(q1)*wt4+sin(q1)+wt5+(-sin(q1)*w4+cos(q1)*w5)*qt1;
+		Double qt234= (w6*bt0-bt0*wt6)/(w6*w6+bt0*bt0);
+		Double bt1	= cos(q1)*wt1+sin(q1)*wt2+(cos(q1)*w2-sin(q1)*w1)*qt1+(a4*sin(q234)+d5*cos(q234)*qt234);
+		Double bt2	= (d5*sin(234)-a4*cos(234))*qt234-wt3;
+		b1			= a2*cos(q2)+a3*cos(q23);
+		b2			= a2*sin(q2)+a3*sin(q23);		
+		
+		Double x	= ((b1*b1)+(b2*b2)-(a2*a2)-(a3*a3));
+		Double y	= (2*a2*a3);
+		Double z	= 2*(b1*bt1+b2*bt2);
+		
+		Double qt3	= z / sqrt(y*y-x*x);
+		
+		return runde(qt3);
+	}
+
+	private Double bestimme_qt4(Double qt2, Double qt3){
+		
+		Double qt4 = qt234-qt2-qt3;
+		
+		return runde(qt4);
+		
+	}
+	
+	private Double bestimme_qt5(Vector<Double> w, Vector<Double> wt){
+		
+		Double wt4	= w.get(3);
+		Double wt5	= w.get(4);
+		Double wt6	= w.get(5);
+		
+		Double w4	= w.get(3);
+		Double w5	= w.get(4);
+		Double w6	= w.get(5);
+		
+		Double qt5 	= (PI*(w4*wt4+w5*wt5+w6*wt6))/(w4*w4+w5*w5+w6*w6);
+		
+		return runde(qt5);
 	}
 	
 	public Vector<Double> getToolConfigVektor(Vector<Double> gelenkvariablen_vektor){
@@ -95,12 +218,11 @@ public class RhinoXR3Kinematic {
 	
 	private Double bestimme_w2(Double q1, Double q2, Double q3, Double q4){
 
-		q234		= q2+q3+q4;
-		Double q23	= q2+q3;
+		q234		= runde(q2+q3+q4);
+		Double q23	= runde(q2+q3);
 		
 		//w2 = S1(a2C2+a3C23+a4C234-d5S234)
 		Double w2 	= sin(q1)*(a2*cos(q2)+a3*cos(q23)+a4*cos(q234)-d5*sin(q234));
-		
 		return runde(w2);
 		
 	}
@@ -186,11 +308,16 @@ public class RhinoXR3Kinematic {
 	}
 	
 	private Double bestimme_q1(Double w1, Double w2){
-		return runde(atan2(w2, w1));
+		
+		Double q1 = atan2(w2, w1);
+		
+		return runde(q1);
 	}
 	
 	private Double bestimme_q3(Vector<Double> tool_config_vektor, Double q1){
 
+		//nach gerenchnet keinen Fehler !!!gefunden!!!
+		
 		Double w1	= tool_config_vektor.get(0);
 		Double w2	= tool_config_vektor.get(1);
 		Double w3	= tool_config_vektor.get(2);
@@ -198,12 +325,13 @@ public class RhinoXR3Kinematic {
 		Double w5	= tool_config_vektor.get(4);
 		Double w6	= tool_config_vektor.get(5);
 		
+		Double b0	= cos(q1)*w4	+sin(q1)*w5;
 
-		
-		this.q234 = atan2(-(cos(q1)*w4	+sin(q1)*w5),		-w6);
-		this.b1	= cos(q1)*w1	+sin(q1)*w2		-a4*cos(q234)	+ d5*sin(q234);
-		this.b2	= d1	-a4*sin(q234)	-d5*cos(q234)	-w3;
-		double bogen = gradToBogen(((b1*b1)+(b2*b2)-(a2*a2)-(a3*a3))/(2*a2*a3));
+		this.q234 	= atan2(-b0,	-w6);
+		this.b1		= cos(q1)*w1	+sin(q1)*w2		-a4*cos(q234)	+ d5*sin(q234);
+		this.b2		= d1	-a4*sin(q234)	-d5*cos(q234)	-w3;
+		double bogen = gradToBogen((pow(b1,2)+pow(b2,2)-pow(a2,2)-pow(a3,2))/(2*a2*a3));
+
 		double q3	= acos(bogen);
 		
 		return runde(q3);
@@ -211,10 +339,11 @@ public class RhinoXR3Kinematic {
 	
 	private Double bestimme_q2(Double q3){
 		
-		Double x 	= (a2+a3*cos(q3))*b2-a3*sin(q3)*b1;
-		Double y 	= (a2+a3*cos(q3))*b1+a3*sin(q3)*b2;
 		
-		Double q2 	= atan2(x, y);
+		Double y 	= (a2+a3*cos(q3))*b2-a3*sin(q3)*b1;
+		Double x 	= (a2+a3*cos(q3))*b1+a3*sin(q3)*b2;
+	
+		Double q2 	= atan2(y, x);
 		
 		return runde(q2);
 	}
@@ -222,7 +351,7 @@ public class RhinoXR3Kinematic {
 	private Double bestimme_q4(Double q2, Double q3){
 		
 		Double q4 = q234-q2-q3;
-		
+
 		return runde(q4);
 	}
 	
