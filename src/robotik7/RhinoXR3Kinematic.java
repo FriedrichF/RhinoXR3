@@ -18,7 +18,7 @@ public class RhinoXR3Kinematic {
 	
 	private final Double a2 = 0.2286;
 	private final Double a3 = 0.2286;
-	private final Double a4 = 0.095;
+	private final Double a4 = 0.95;
 	
 	private final Double d1 = 0.2604;
 	private final Double d5 = 0.1683;
@@ -338,7 +338,6 @@ public class RhinoXR3Kinematic {
 	}
 	
 	private Double bestimme_q2(Double q3){
-		
 		
 		Double y 	= (a2+a3*cos(q3))*b2-a3*sin(q3)*b1;
 		Double x 	= (a2+a3*cos(q3))*b1+a3*sin(q3)*b2;
