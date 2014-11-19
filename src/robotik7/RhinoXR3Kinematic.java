@@ -55,7 +55,7 @@ public class RhinoXR3Kinematic {
 	private Double bestimme_qt1(Double w1, Double wt2, Double w2, Double wt1 ){
 		
 		//skript 4 seite 51, Geschwindigkeit basis
-		Double qt1 = (w1*wt2-w2*w1)/(w1*w1+w2*w2);
+		Double qt1 = (w1*wt2-w2*wt1)/(w1*w1+w2*w2);
 		
 		return runde(qt1);
 		
@@ -73,6 +73,7 @@ public class RhinoXR3Kinematic {
 		
 		Double w1	= w.get(0);
 		Double w2	= w.get(1);
+		Double w3	= w.get(2);
 		Double w4	= w.get(3);
 		Double w5	= w.get(4);
 		Double w6	= w.get(5);
@@ -80,14 +81,19 @@ public class RhinoXR3Kinematic {
 		Double q1	= q.get(0);
 		Double q2	= q.get(1);
 		Double q3	= q.get(2);
+		Double q4 	= q.get(3);
 		Double q23	= q2+q3;
+		q234 = q2+q3+q4;
 		
 		Double bt0	= cos(q1)*wt4+sin(q1)+wt5+(-sin(q1)*w4+cos(q1)*w5)*qt1;
-		qt234= (w6*bt0-bt0*wt6)/(w6*w6+bt0*bt0);
+		Double b0 = cos(q1)*w4+sin(q1)*w5;
+		qt234= (w6*bt0-b0*wt6)/(w6*w6+b0*b0);
 		Double bt1	= cos(q1)*wt1+sin(q1)*wt2+(cos(q1)*w2-sin(q1)*w1)*qt1+(a4*sin(q234)+d5*cos(q234)*qt234);
-		Double bt2	= (d5*sin(234)-a4*cos(234))*qt234-wt3;
-		b1			= a2*cos(q2)+a3*cos(q23);
-		b2			= a2*sin(q2)+a3*sin(q23);
+		Double bt2	= (d5*sin(q234)-a4*cos(q234))*qt234-wt3;
+//		b1			= a2*cos(q2)+a3*cos(q23);
+//		b2			= a2*sin(q2)+a3*sin(q23);
+		b1			= cos(q1)*w1+sin(q1)*w2-a4*cos(q234)+d5*sin(q234);
+		b2			= d1 - a4*sin(q234) - d5*cos(q234)-w3;
 		
 		Double b3 	= (a2+a3*cos(q3)*b1+a3*sin(q3)*b2);
 		Double b4 	= (a2+a3*cos(q3)*b2+a3*sin(q3)*b1);
@@ -128,15 +134,17 @@ public class RhinoXR3Kinematic {
 		Double q3	= q.get(2);
 		Double q23	= q2+q3;
 		
+		Double b0 = cos(q1)*w4+sin(q1)*w5;
+		
 		q234		= q.get(1)+q.get(2)+q.get(3);
 		
 		//skript 4, Seite 52 Geschwindigkeit Ellbogengelenk
 		Double bt0	= cos(q1)*wt4+sin(q1)+wt5+(-sin(q1)*w4+cos(q1)*w5)*qt1;
-		Double qt234= (w6*bt0-bt0*wt6)/(w6*w6+bt0*bt0);
+		Double qt234= (w6*bt0-b0*wt6)/(w6*w6+b0*b0);
 		Double bt1	= cos(q1)*wt1+sin(q1)*wt2+(cos(q1)*w2-sin(q1)*w1)*qt1+(a4*sin(q234)+d5*cos(q234)*qt234);
-		Double bt2	= (d5*sin(234)-a4*cos(234))*qt234-wt3;
-		b1			= a2*cos(q2)+a3*cos(q23);
-		b2			= a2*sin(q2)+a3*sin(q23);		
+		Double bt2	= (d5*sin(q234)-a4*cos(q234))*qt234-wt3;
+//		b1			= a2*cos(q2)+a3*cos(q23);
+//		b2			= a2*sin(q2)+a3*sin(q23);		
 		
 		Double x	= ((b1*b1)+(b2*b2)-(a2*a2)-(a3*a3));
 		Double y	= (2*a2*a3);
