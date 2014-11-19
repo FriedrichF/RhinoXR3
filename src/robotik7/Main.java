@@ -12,6 +12,8 @@ public class Main {
 		Double deltaT = 0.1;
 
 		RhinoXR3Kinematic r = new RhinoXR3Kinematic();
+		Ausgabe textFile = new Ausgabe();
+		textFile.openFile("w1.txt");
 		
 		Vector<Double> startPunkt = new Vector<Double>();
 		startPunkt.add(1.1786);
@@ -46,17 +48,23 @@ public class Main {
 		Double speed;
 		
 		for(Double t = 0.0; t < T; t=t+deltaT){
+			textFile.writeToFile(runde(t+deltaT)+"\r");
+			
 			//Nächsten Tool Config vector berechnen
 			//w(t) = (1-s(t))w0+s(t)w1
 			wNeu.clear();
 			//Geschwindigkeitsverteilfunktion
 			speed = r.speed(t, T, tau);
+			textFile.writeToFile(runde(speed)+"\r");
+			
 			wNeu.add((1-speed)*startPunkt.get(0)+speed*endPunkt1.get(0));
 			wNeu.add((1-speed)*startPunkt.get(1)+speed*endPunkt1.get(1));
 			wNeu.add((1-speed)*startPunkt.get(2)+speed*endPunkt1.get(2));
 			wNeu.add((1-speed)*startPunkt.get(3)+speed*endPunkt1.get(3));
 			wNeu.add((1-speed)*startPunkt.get(4)+speed*endPunkt1.get(4));
 			wNeu.add((1-speed)*startPunkt.get(5)+speed*endPunkt1.get(5));
+			
+			textFile.writeToFile(vectorToString(wNeu));
 			System.out.println("t: "+t);
 			System.out.println("neues w:\n"+wNeu);		//Passt!!!!!!!
 			
@@ -68,11 +76,13 @@ public class Main {
 			sollSpeedTool.add((wNeu.get(3)-wLast.get(3))/deltaT);
 			sollSpeedTool.add((wNeu.get(4)-wLast.get(4))/deltaT);
 			sollSpeedTool.add((wNeu.get(5)-wLast.get(5))/deltaT);
+			textFile.writeToFile(vectorToString(sollSpeedTool));
 			System.out.println("Sollgeschwindigkeit Tool:\n"+sollSpeedTool);
 			
 			//Sollgeschwindigkeit im Gelenkraum
 			sollSpeedGelenk.clear();
 			sollSpeedGelenk = r.getGeschwindigkeitGelenkvariabel(wLast, sollSpeedTool, qt);
+			textFile.writeToFile(vectorToString(sollSpeedGelenk));
 			System.out.println("Sollgeschwindigkeit Gelenk:\n"+sollSpeedGelenk);
 			
 			//Neue Position im Gelenkraum simulieren
@@ -81,20 +91,35 @@ public class Main {
 			qt.set(2,qt.get(2)+sollSpeedGelenk.get(2)*deltaT);
 			qt.set(3,qt.get(3)+sollSpeedGelenk.get(3)*deltaT);
 			qt.set(4,qt.get(4)+sollSpeedGelenk.get(4)*deltaT);
-			System.out.println("Gelenkraum berechnet:\n"+r.getGelenkvariablenVektor(wNeu));
-			System.out.println("Gelenkraum Neu:\n"+qt);
+			textFile.writeToFile(vectorToString(qt));
 			
+			System.out.println("Gelenkraum Neu:\n"+qt);
 			
 			//aus qt wt berechnen
 			qtTOwt = r.getToolConfigVektor(qt);
+			
+			textFile.writeToFile(vectorToString(qtTOwt));
 			System.out.println("Tool Config berechnet:\n"+qtTOwt);
+			
+			//Fehler zwischen Soll und Ist Position
+			qtTOwt.set(0,wNeu.get(0)-qtTOwt.get(0));
+			qtTOwt.set(1,wNeu.get(1)-qtTOwt.get(1));
+			qtTOwt.set(2,wNeu.get(2)-qtTOwt.get(2));
+			qtTOwt.set(3,wNeu.get(3)-qtTOwt.get(3));
+			qtTOwt.set(4,wNeu.get(4)-qtTOwt.get(4));
+			qtTOwt.set(5,wNeu.get(5)-qtTOwt.get(5));
+			
+			textFile.writeToFile(vectorToString(qtTOwt));
+			System.out.println("Fehler Soll und Ist:\n"+qtTOwt);
+			
 			
 			
 			wLast = (Vector<Double>) wNeu.clone();
 			System.out.println();
+			textFile.writeToFile("\r");
 		}
 		
-		System.out.println(vectorToString(qtTOwt));
+		textFile.closeFile();
 		
 
 	}
@@ -104,7 +129,7 @@ public class Main {
 		String s="";
 		
 		for(Double d: v){
-			s+=runde(d)+"\r";
+			s+=runde(d)+"\t";
 		}
 		
 		return s+"\r";
