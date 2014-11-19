@@ -365,6 +365,18 @@ public class RhinoXR3Kinematic {
 		return runde(q5);
 	}
 	
+	public Double speed(Double t, Double T, Double tau){
+		if(t >= T)
+			return 1.0;
+		else if(t == 0)
+			return 0.0;
+		else if(t<tau)
+			return 0.5/(tau*(T-tau))*t*t;
+		else if(t>(T-tau))
+			return (-0.5*t*t+T*t)/(tau*(T-tau))+1+((-0.5*T*T)/((T-tau)*tau));
+		else
+			return t/(T-tau)-0.5*(tau/(T-tau));
+	}
 	
 	public String vectorToString(Vector<Double> v){
 		
