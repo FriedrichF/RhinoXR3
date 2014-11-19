@@ -34,12 +34,12 @@ public class RhinoXR3Kinematic {
 
 	
 	public Vector<Double> getGeschwindigkeitGelenkvariabel(Vector<Double> w, Vector<Double> wt, Vector<Double> q){
-		Double wt1	= w.get(0);
-		Double wt2	= w.get(1);
-		Double wt3	= w.get(2);
-		Double wt4	= w.get(3);
-		Double wt5	= w.get(4);
-		Double wt6	= w.get(5);
+		Double wt1	= wt.get(0);
+		Double wt2	= wt.get(1);
+		Double wt3	= wt.get(2);
+		Double wt4	= wt.get(3);
+		Double wt5	= wt.get(4);
+		Double wt6	= wt.get(5);
 		
 		Double q1	= q.get(0);
 		Double q2	= q.get(1);
@@ -63,7 +63,7 @@ public class RhinoXR3Kinematic {
 		Double qt1, qt2, qt3, qt4, qt5;
 		qt1 = bestimme_qt1(w1, wt2, w2, wt1);
 		qt3 = bestimme_qt3(w, wt, q, qt1);
-		qt2 = bestimme_qt2(w, wt, q, qt1, qt3);
+		qt2 = bestimme_qt2(q, qt3);
 		qt4	= bestimme_qt4(qt2,qt3);
 		qt5 = bestimme_qt5(w,wt);
 		
@@ -85,31 +85,16 @@ public class RhinoXR3Kinematic {
 	}
 	
 	
-	private Double bestimme_qt2(Vector<Double> w, Vector<Double> wt, Vector<Double> q, Double qt1, Double qt3 ){
-		
-		Double wt1	= w.get(0);
-		Double wt2	= w.get(1);
-		Double wt3	= w.get(2);
-		Double wt4	= w.get(3);
-		Double wt5	= w.get(4);
-		Double wt6	= w.get(5);
-		
-		Double w1	= w.get(0);
-		Double w2	= w.get(1);
-		Double w3	= w.get(2);
-		Double w4	= w.get(3);
-		Double w5	= w.get(4);
-		Double w6	= w.get(5);
-		
+	private Double bestimme_qt2(Vector<Double> q, Double qt3 ){		
 		Double q1	= q.get(0);
 		Double q2	= q.get(1);
 		Double q3	= q.get(2);
 		Double q4 	= q.get(3);		
 		
 		Double b3 	= (a2+a3*cos(q3)*b1+a3*sin(q3)*b2);
-		Double b4 	= (a2+a3*cos(q3)*b2+a3*sin(q3)*b1);
+		Double b4 	= (a2+a3*cos(q3)*b2-a3*sin(q3)*b1);
 		Double bt3 	= (a2+a3*cos(q3)*bt1+a3*sin(q3)*bt2	+ a3*(cos(q3)*b2-sin(q3)*b1)*qt3);
-		Double bt4 	= (a2+a3*cos(q3)*bt2+a3*sin(q3)*bt1	- a3*(cos(q3)*b1+sin(q3)*b2)*qt3);
+		Double bt4 	= (a2+a3*cos(q3)*bt2-a3*sin(q3)*bt1	- a3*(cos(q3)*b1+sin(q3)*b2)*qt3);
 		
 		Double qt2	= (b3*bt4-b4*bt3)/(b3*b3+b4*b4);
 		
@@ -127,12 +112,12 @@ public class RhinoXR3Kinematic {
 	 */
 	private Double bestimme_qt3(Vector<Double> w, Vector<Double> wt, Vector<Double> q, Double qt1){
 		
-		Double wt1	= w.get(0);
-		Double wt2	= w.get(1);
-		Double wt3	= w.get(2);
-		Double wt4	= w.get(3);
-		Double wt5	= w.get(4);
-		Double wt6	= w.get(5);
+		Double wt1	= wt.get(0);
+		Double wt2	= wt.get(1);
+		Double wt3	= wt.get(2);
+		Double wt4	= wt.get(3);
+		Double wt5	= wt.get(4);
+		Double wt6	= wt.get(5);
 		
 		Double w1	= w.get(0);
 		Double w2	= w.get(1);
@@ -142,8 +127,7 @@ public class RhinoXR3Kinematic {
 		
 		Double q1	= q.get(0);
 		Double q2	= q.get(1);
-		Double q3	= q.get(2);
-		Double q23	= q2+q3;		
+		Double q3	= q.get(2);	
 		
 		//skript 4, Seite 52 Geschwindigkeit Ellbogengelenk
 		Double bt0	= cos(q1)*wt4+sin(q1)*wt5+(-sin(q1)*w4+cos(q1)*w5)*qt1;
@@ -168,9 +152,9 @@ public class RhinoXR3Kinematic {
 	
 	private Double bestimme_qt5(Vector<Double> w, Vector<Double> wt){
 		
-		Double wt4	= w.get(3);
-		Double wt5	= w.get(4);
-		Double wt6	= w.get(5);
+		Double wt4	= wt.get(3);
+		Double wt5	= wt.get(4);
+		Double wt6	= wt.get(5);
 		
 		Double w4	= w.get(3);
 		Double w5	= w.get(4);
@@ -229,8 +213,8 @@ public class RhinoXR3Kinematic {
 	
 	private Double bestimme_w2(Double q1, Double q2, Double q3, Double q4){
 
-		q234		= runde(q2+q3+q4);
-		Double q23	= runde(q2+q3);
+		q234		= q2+q3+q4;
+		Double q23	= q2+q3;
 		
 		//w2 = S1(a2C2+a3C23+a4C234-d5S234)
 		Double w2 	= sin(q1)*(a2*cos(q2)+a3*cos(q23)+a4*cos(q234)-d5*sin(q234));
@@ -387,30 +371,6 @@ public class RhinoXR3Kinematic {
 			return (-0.5*t*t+T*t)/(tau*(T-tau))+1+((-0.5*T*T)/((T-tau)*tau));
 		else
 			return t/(T-tau)-0.5*(tau/(T-tau));
-	}
-	
-	public String vectorToString(Vector<Double> v){
-		
-		String s="";
-		
-		for(Double d: v){
-			s+=runde(d)+"\r";
-		}
-		
-		return s+"\r";
-		
-	}
-	
-	/**
-	 * 
-	 * Rundet auf 6 Nachkommastellen
-	 * 
-	 * @param wert der gerundet werden soll
-	 * @return den gerundeten Wert zurück
-	 */
-	private Double runde(Double wert){
-		return (double) Math.round(wert * 1000000.0) / 1000000.0;
-		
 	}
 	
 }

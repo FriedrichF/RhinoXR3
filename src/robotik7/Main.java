@@ -94,7 +94,33 @@ public class Main {
 			System.out.println();
 		}
 		
+		System.out.println(vectorToString(qtTOwt));
+		
 
+	}
+	
+	public static String vectorToString(Vector<Double> v){
+		
+		String s="";
+		
+		for(Double d: v){
+			s+=runde(d)+"\r";
+		}
+		
+		return s+"\r";
+		
+	}
+	
+	/**
+	 * 
+	 * Rundet auf 6 Nachkommastellen
+	 * 
+	 * @param wert der gerundet werden soll
+	 * @return den gerundeten Wert zurück
+	 */
+	private static Double runde(Double wert){
+		return (double) Math.round(wert * 10000.0) / 10000.0;
+		
 	}
 
 }
