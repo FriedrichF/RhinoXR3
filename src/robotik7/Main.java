@@ -41,8 +41,7 @@ public class Main {
 		Vector<Double> wLast = (Vector<Double>) startPunkt.clone();
 		Vector<Double> sollSpeedTool = new Vector<Double>();
 		Vector<Double> sollSpeedGelenk = new Vector<Double>();
-		Vector<Double> gelenkNeu = new Vector<Double>();
-		Vector<Double> qt = new Vector<Double>();
+		Vector<Double> qt = r.getGelenkvariablenVektor(startPunkt);
 		Vector<Double> qtTOwt = new Vector<Double>();
 		Double speed;
 		
@@ -59,7 +58,7 @@ public class Main {
 			wNeu.add((1-speed)*startPunkt.get(4)+speed*endPunkt1.get(4));
 			wNeu.add((1-speed)*startPunkt.get(5)+speed*endPunkt1.get(5));
 			System.out.println("t: "+t);
-			System.out.println("neues w:\n"+wNeu);
+			System.out.println("neues w:\n"+wNeu);		//Passt!!!!!!!
 			
 			//Sollgeschwindigkeit im Tool Configraum berechnen
 			sollSpeedTool.clear();
@@ -73,20 +72,21 @@ public class Main {
 			
 			//Sollgeschwindigkeit im Gelenkraum
 			sollSpeedGelenk.clear();
-			qt = r.getGelenkvariablenVektor(wLast);
 			sollSpeedGelenk = r.getGeschwindigkeitGelenkvariabel(wLast, sollSpeedTool, qt);
 			System.out.println("Sollgeschwindigkeit Gelenk:\n"+sollSpeedGelenk);
 			
 			//Neue Position im Gelenkraum simulieren
-			gelenkNeu.clear();
-			gelenkNeu.add(qt.get(0)+sollSpeedGelenk.get(0)*deltaT);
-			gelenkNeu.add(qt.get(1)+sollSpeedGelenk.get(1)*deltaT);
-			gelenkNeu.add(qt.get(2)+sollSpeedGelenk.get(2)*deltaT);
-			gelenkNeu.add(qt.get(3)+sollSpeedGelenk.get(3)*deltaT);
-			gelenkNeu.add(qt.get(4)+sollSpeedGelenk.get(4)*deltaT);
+			qt.set(0,qt.get(0)+sollSpeedGelenk.get(0)*deltaT);
+			qt.set(1,qt.get(1)+sollSpeedGelenk.get(1)*deltaT);
+			qt.set(2,qt.get(2)+sollSpeedGelenk.get(2)*deltaT);
+			qt.set(3,qt.get(3)+sollSpeedGelenk.get(3)*deltaT);
+			qt.set(4,qt.get(4)+sollSpeedGelenk.get(4)*deltaT);
+			System.out.println("Gelenkraum berechnet:\n"+r.getGelenkvariablenVektor(wNeu));
+			System.out.println("Gelenkraum Neu:\n"+qt);
+			
 			
 			//aus qt wt berechnen
-			qtTOwt = r.getToolConfigVektor(gelenkNeu);
+			qtTOwt = r.getToolConfigVektor(qt);
 			System.out.println("Tool Config berechnet:\n"+qtTOwt);
 			
 			

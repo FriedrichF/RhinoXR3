@@ -24,18 +24,44 @@ public class RhinoXR3Kinematic {
 	private final Double d5 = 0.1683;
 	
 	private Double q234;
+	private Double b0;
 	private Double b1;
 	private Double b2;
+	private Double bt1, bt2;
 	private Double qt234;
 	
 	
 
 	
 	public Vector<Double> getGeschwindigkeitGelenkvariabel(Vector<Double> w, Vector<Double> wt, Vector<Double> q){
+		Double wt1	= w.get(0);
+		Double wt2	= w.get(1);
+		Double wt3	= w.get(2);
+		Double wt4	= w.get(3);
+		Double wt5	= w.get(4);
+		Double wt6	= w.get(5);
+		
+		Double q1	= q.get(0);
+		Double q2	= q.get(1);
+		Double q3	= q.get(2);
+		Double q4 	= q.get(3);
+		
+		Double w1	= w.get(0);
+		Double w2	= w.get(1);
+		Double w3	= w.get(2);
+		Double w4	= w.get(3);
+		Double w5	= w.get(4);
+		Double w6	= w.get(5);
+		
+		b0 			= cos(q1)*w4+sin(q1)*w5;
+		q234		= Math.atan2(-b0, -w6);
+		b1			= cos(q1)*w1+sin(q1)*w2-a4*cos(q234)+d5*sin(q234);
+		b2			= d1 - a4*sin(q234) - d5*cos(q234)-w3;
+		
 		
 		//t für Ableitung nach zeit
 		Double qt1, qt2, qt3, qt4, qt5;
-		qt1 = bestimme_qt1(w.get(0), wt.get(1), w.get(1), wt.get(0));
+		qt1 = bestimme_qt1(w1, wt2, w2, wt1);
 		qt3 = bestimme_qt3(w, wt, q, qt1);
 		qt2 = bestimme_qt2(w, wt, q, qt1, qt3);
 		qt4	= bestimme_qt4(qt2,qt3);
@@ -55,10 +81,7 @@ public class RhinoXR3Kinematic {
 	private Double bestimme_qt1(Double w1, Double wt2, Double w2, Double wt1 ){
 		
 		//skript 4 seite 51, Geschwindigkeit basis
-		Double qt1 = (w1*wt2-w2*wt1)/(w1*w1+w2*w2);
-		
-		return runde(qt1);
-		
+		return (w1*wt2-w2*wt1)/(w1*w1+w2*w2);		
 	}
 	
 	
@@ -81,19 +104,7 @@ public class RhinoXR3Kinematic {
 		Double q1	= q.get(0);
 		Double q2	= q.get(1);
 		Double q3	= q.get(2);
-		Double q4 	= q.get(3);
-		Double q23	= q2+q3;
-		q234 = q2+q3+q4;
-		
-		Double bt0	= cos(q1)*wt4+sin(q1)+wt5+(-sin(q1)*w4+cos(q1)*w5)*qt1;
-		Double b0 = cos(q1)*w4+sin(q1)*w5;
-		qt234= (w6*bt0-b0*wt6)/(w6*w6+b0*b0);
-		Double bt1	= cos(q1)*wt1+sin(q1)*wt2+(cos(q1)*w2-sin(q1)*w1)*qt1+(a4*sin(q234)+d5*cos(q234)*qt234);
-		Double bt2	= (d5*sin(q234)-a4*cos(q234))*qt234-wt3;
-//		b1			= a2*cos(q2)+a3*cos(q23);
-//		b2			= a2*sin(q2)+a3*sin(q23);
-		b1			= cos(q1)*w1+sin(q1)*w2-a4*cos(q234)+d5*sin(q234);
-		b2			= d1 - a4*sin(q234) - d5*cos(q234)-w3;
+		Double q4 	= q.get(3);		
 		
 		Double b3 	= (a2+a3*cos(q3)*b1+a3*sin(q3)*b2);
 		Double b4 	= (a2+a3*cos(q3)*b2+a3*sin(q3)*b1);
@@ -102,7 +113,7 @@ public class RhinoXR3Kinematic {
 		
 		Double qt2	= (b3*bt4-b4*bt3)/(b3*b3+b4*b4);
 		
-		return runde(qt2);
+		return qt2;
 	}
 	
 	/**
@@ -132,19 +143,13 @@ public class RhinoXR3Kinematic {
 		Double q1	= q.get(0);
 		Double q2	= q.get(1);
 		Double q3	= q.get(2);
-		Double q23	= q2+q3;
-		
-		Double b0 = cos(q1)*w4+sin(q1)*w5;
-		
-		q234		= q.get(1)+q.get(2)+q.get(3);
+		Double q23	= q2+q3;		
 		
 		//skript 4, Seite 52 Geschwindigkeit Ellbogengelenk
-		Double bt0	= cos(q1)*wt4+sin(q1)+wt5+(-sin(q1)*w4+cos(q1)*w5)*qt1;
-		Double qt234= (w6*bt0-b0*wt6)/(w6*w6+b0*b0);
-		Double bt1	= cos(q1)*wt1+sin(q1)*wt2+(cos(q1)*w2-sin(q1)*w1)*qt1+(a4*sin(q234)+d5*cos(q234)*qt234);
-		Double bt2	= (d5*sin(q234)-a4*cos(q234))*qt234-wt3;
-//		b1			= a2*cos(q2)+a3*cos(q23);
-//		b2			= a2*sin(q2)+a3*sin(q23);		
+		Double bt0	= cos(q1)*wt4+sin(q1)*wt5+(-sin(q1)*w4+cos(q1)*w5)*qt1;
+		qt234 = (w6*bt0-b0*wt6)/(w6*w6+b0*b0);
+		bt1	= cos(q1)*wt1+sin(q1)*wt2+(cos(q1)*w2-sin(q1)*w1)*qt1+(a4*sin(q234)+d5*cos(q234)*qt234);
+		bt2	= (d5*sin(q234)-a4*cos(q234))*qt234-wt3;	
 		
 		Double x	= ((b1*b1)+(b2*b2)-(a2*a2)-(a3*a3));
 		Double y	= (2*a2*a3);
@@ -152,14 +157,12 @@ public class RhinoXR3Kinematic {
 		
 		Double qt3	= z / sqrt(y*y-x*x);
 		
-		return runde(qt3);
+		return qt3;
 	}
 
 	private Double bestimme_qt4(Double qt2, Double qt3){
 		
-		Double qt4 = qt234-qt2-qt3;
-		
-		return runde(qt4);
+		return qt234-qt2-qt3;
 		
 	}
 	
@@ -175,7 +178,7 @@ public class RhinoXR3Kinematic {
 		
 		Double qt5 	= (PI*(w4*wt4+w5*wt5+w6*wt6))/(w4*w4+w5*w5+w6*w6);
 		
-		return runde(qt5);
+		return qt5;
 	}
 	
 	public Vector<Double> getToolConfigVektor(Vector<Double> gelenkvariablen_vektor){
@@ -220,7 +223,7 @@ public class RhinoXR3Kinematic {
 		//w1 = C1(a2C2+a3C23+a4C234-d5S234)
 		Double w1 	= cos(q1)*(a2*cos(q2)+a3*cos(q23)+a4*cos(q234)-d5*sin(q234));
 		
-		return runde(w1);
+		return w1;
 		
 	}
 	
@@ -231,7 +234,7 @@ public class RhinoXR3Kinematic {
 		
 		//w2 = S1(a2C2+a3C23+a4C234-d5S234)
 		Double w2 	= sin(q1)*(a2*cos(q2)+a3*cos(q23)+a4*cos(q234)-d5*sin(q234));
-		return runde(w2);
+		return w2;
 		
 	}
 	
@@ -243,7 +246,7 @@ public class RhinoXR3Kinematic {
 		//w3 = d1-a2S-a3S2-a4S234-d5C234
 		Double w3 	= d1	-a2*sin(q2)	-a3*sin(q23) 	-a4*sin(q234)	-d5*cos(q234);
 		
-		return runde(w3);
+		return w3;
 		
 	}
 	
@@ -255,7 +258,7 @@ public class RhinoXR3Kinematic {
 		
 		Double w4 	= -pow(E, (q5/PI))*cos(q1)*sin(q234);
 		
-		return runde(w4);
+		return w4;
 		
 	}
 	
@@ -267,7 +270,7 @@ public class RhinoXR3Kinematic {
 		
 		Double w5 	= -pow(E, (q5/PI))*sin(q1)*sin(q234);
 		
-		return runde(w5);
+		return w5;
 		
 	}
 	
@@ -279,7 +282,7 @@ public class RhinoXR3Kinematic {
 		
 		Double w6 	= -pow(E, (q5/PI))*cos(q234);
 		
-		return runde(w6);
+		return w6;
 		
 	}
 	
@@ -319,7 +322,7 @@ public class RhinoXR3Kinematic {
 		
 		Double q1 = atan2(w2, w1);
 		
-		return runde(q1);
+		return q1;
 	}
 	
 	private Double bestimme_q3(Vector<Double> tool_config_vektor, Double q1){
@@ -342,7 +345,7 @@ public class RhinoXR3Kinematic {
 
 		double q3	= acos(bogen);
 		
-		return runde(q3);
+		return q3;
 	}
 	
 	private Double bestimme_q2(Double q3){
@@ -352,14 +355,14 @@ public class RhinoXR3Kinematic {
 	
 		Double q2 	= atan2(y, x);
 		
-		return runde(q2);
+		return q2;
 	}
 	
 	private Double bestimme_q4(Double q2, Double q3){
 		
 		Double q4 = q234-q2-q3;
 
-		return runde(q4);
+		return q4;
 	}
 	
 	private Double bestimme_q5(Vector<Double> tool_config_vektor){
@@ -370,7 +373,7 @@ public class RhinoXR3Kinematic {
 		
 		Double q5 = PI*log(sqrt(w4*w4+w5*w5+w6*w6));
 		
-		return runde(q5);
+		return q5;
 	}
 	
 	public Double speed(Double t, Double T, Double tau){
@@ -391,7 +394,7 @@ public class RhinoXR3Kinematic {
 		String s="";
 		
 		for(Double d: v){
-			s+=d+"\r";
+			s+=runde(d)+"\r";
 		}
 		
 		return s+"\r";
@@ -406,7 +409,6 @@ public class RhinoXR3Kinematic {
 	 * @return den gerundeten Wert zurück
 	 */
 	private Double runde(Double wert){
-		
 		return (double) Math.round(wert * 1000000.0) / 1000000.0;
 		
 	}
