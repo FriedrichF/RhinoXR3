@@ -33,6 +33,13 @@ public class RhinoXR3Kinematic {
 	
 
 	
+	/**
+	 * Aufgabe c
+	 * @param w
+	 * @param wt
+	 * @param q
+	 * @return
+	 */
 	public Vector<Double> getGeschwindigkeitGelenkvariabel(Vector<Double> w, Vector<Double> wt, Vector<Double> q){
 		Double wt1	= wt.get(0);
 		Double wt2	= wt.get(1);
@@ -165,6 +172,11 @@ public class RhinoXR3Kinematic {
 		return qt5;
 	}
 	
+	/**
+	 * Aufgabe a
+	 * @param gelenkvariablen_vektor
+	 * @return
+	 */
 	public Vector<Double> getToolConfigVektor(Vector<Double> gelenkvariablen_vektor){
 		
 		if(gelenkvariablen_vektor.size() != 5){
@@ -270,6 +282,11 @@ public class RhinoXR3Kinematic {
 		
 	}
 	
+	/**
+	 * Aufgabe b
+	 * @param tool_config_vektor
+	 * @return
+	 */
 	public Vector<Double> getGelenkvariablenVektor(Vector<Double> tool_config_vektor){
 		
 		Vector<Double> w = tool_config_vektor;
@@ -360,6 +377,13 @@ public class RhinoXR3Kinematic {
 		return q5;
 	}
 	
+	/**
+	 * Aufgabe d
+	 * @param t
+	 * @param T
+	 * @param tau
+	 * @return
+	 */
 	public Double speed(Double t, Double T, Double tau){
 		if(t >= T)
 			return 1.0;

@@ -48,14 +48,14 @@ public class Main {
 		Double speed;
 		
 		for(Double t = 0.0; t < T; t=t+deltaT){
-			textFile.writeToFile(runde(t+deltaT)+"\r");
+			textFile.writeToFile(runde(t+deltaT)+"\r\n"+"");
 			
 			//Nächsten Tool Config vector berechnen
 			//w(t) = (1-s(t))w0+s(t)w1
 			wNeu.clear();
 			//Geschwindigkeitsverteilfunktion
 			speed = r.speed(t, T, tau);
-			textFile.writeToFile(runde(speed)+"\r");
+			textFile.writeToFile(runde(speed)+"\r\n"+"");
 			
 			wNeu.add((1-speed)*startPunkt.get(0)+speed*endPunkt1.get(0));
 			wNeu.add((1-speed)*startPunkt.get(1)+speed*endPunkt1.get(1));
@@ -116,7 +116,7 @@ public class Main {
 			
 			wLast = (Vector<Double>) wNeu.clone();
 			System.out.println();
-			textFile.writeToFile("\r");
+			textFile.writeToFile("\r\n"+"");
 		}
 		
 		textFile.closeFile();
@@ -129,10 +129,10 @@ public class Main {
 		String s="";
 		
 		for(Double d: v){
-			s+=runde(d)+"\t";
+			s+=runde(d)+" | ";
 		}
 		
-		return s+"\r";
+		return s+"\r\n";
 		
 	}
 	
