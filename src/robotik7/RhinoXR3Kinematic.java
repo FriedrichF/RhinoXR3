@@ -91,10 +91,10 @@ public class RhinoXR3Kinematic {
 		Double q3	= q.get(2);
 		Double q4 	= q.get(3);		
 		
-		Double b3 	= (a2+a3*cos(q3)*b1+a3*sin(q3)*b2);
-		Double b4 	= (a2+a3*cos(q3)*b2-a3*sin(q3)*b1);
-		Double bt3 	= (a2+a3*cos(q3)*bt1+a3*sin(q3)*bt2	+ a3*(cos(q3)*b2-sin(q3)*b1)*qt3);
-		Double bt4 	= (a2+a3*cos(q3)*bt2-a3*sin(q3)*bt1	- a3*(cos(q3)*b1+sin(q3)*b2)*qt3);
+		Double b3 	= (a2+a3*cos(q3))*b1+a3*sin(q3)*b2;
+		Double b4 	= (a2+a3*cos(q3))*b2-a3*sin(q3)*b1;
+		Double bt3 	= (a2+a3*cos(q3))*bt1+a3*sin(q3)*bt2	+ a3*(cos(q3)*b2-sin(q3)*b1)*qt3;
+		Double bt4 	= (a2+a3*cos(q3))*bt2-a3*sin(q3)*bt1	- a3*(cos(q3)*b1+sin(q3)*b2)*qt3;
 		
 		Double qt2	= (b3*bt4-b4*bt3)/(b3*b3+b4*b4);
 		
@@ -141,7 +141,7 @@ public class RhinoXR3Kinematic {
 		
 		Double qt3	= z / sqrt(y*y-x*x);
 		
-		return qt3;
+		return -qt3;
 	}
 
 	private Double bestimme_qt4(Double qt2, Double qt3){
